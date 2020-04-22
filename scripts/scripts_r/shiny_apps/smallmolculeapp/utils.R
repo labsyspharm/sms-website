@@ -159,18 +159,20 @@ fast_search <- function(data, req) {
 }
 
 dt_add_download_button <- function(
-  dt, id, output, r_data, fn_prefix, type = c("csv", "excel")
+  dt, id, ns, output, r_data, fn_prefix, type = c("csv", "excel")
 ) {
   type <- match.arg(type)
-  dl_button <- downloadButton(paste0(id, "_button"), paste("Download", toupper(type)))
+  button_id <- paste0(id, "_button")
+  wrapper_id <- paste0(id, "_wrapper")
+  dl_button <- downloadButton(ns(button_id), paste("Download", toupper(type)), class = "dt-button")
   insertUI("body", ui = dl_button)
-  dt$x$callback <- DT::JS(paste0(dt$x$callback, "$('#", id, "_wrapper').append($('#", id, "_button'));"))
+  dt$x$callback <- DT::JS(paste0(dt$x$callback, "$('#", ns(wrapper_id), "').append($('#", ns(button_id), "'));"))
   if (is.null(dt$x$options))
     dt$x$options <- list()
   if (is.null(dt$x$options$dom))
     dt$x$options$dom <- "lfrtipB"
-  dt$x$options$dom <- paste0(dt$x$options$dom, '<"#', id, '_wrapper">')
-  output[[paste0(id, "_button")]] <- downloadHandler(
+  dt$x$options$dom <- paste0(dt$x$options$dom, '<"#', ns(wrapper_id), '">')
+  output[[button_id]] <- downloadHandler(
     filename = function()
       paste0(fn_prefix, switch(type, csv = ".csv", excel = ".xlsx")),
     content = function(file) {
@@ -185,5 +187,3 @@ dt_add_download_button <- function(
   browser()
   dt
 }
-
-
