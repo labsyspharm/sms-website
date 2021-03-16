@@ -197,12 +197,12 @@ selectivityServer <- function(input, output, session) {
   r_selection_genes <- reactive({
     req(!is.null(r_include_non_human()))
     if (r_include_non_human()) { # all genes
-      data_selectivity[["lspci_target_id"]] %>%
+      value(f_data_selectivity)[["lspci_target_id"]] %>%
         unique()
     } else { # just human genes
       data_target_map[
         tax_id == 9606 &
-          lspci_target_id %in% data_selectivity[["lspci_target_id"]],
+          lspci_target_id %in% value(f_data_selectivity)[["lspci_target_id"]],
         .(lspci_target_id)
       ][["lspci_target_id"]]
     }
@@ -233,10 +233,10 @@ selectivityServer <- function(input, output, session) {
       r_eligible_lspci_ids()
     )
     message("Calculating binding ", r_query_target())
-    data_selectivity[
+    value(f_data_selectivity)[
       lspci_target_id == r_query_target() & lspci_id %in% r_eligible_lspci_ids()
     ][
-      data_compounds[
+      value(f_data_compounds)[
         ,
         .(lspci_id, name = pref_name, chembl_id)
       ],

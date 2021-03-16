@@ -1,9 +1,9 @@
 filter_commercial <- function(only_commercial) {
   if (only_commercial)
-    data_compounds[commercially_available == TRUE][["lspci_id"]] %>%
+    value(f_data_compounds)[commercially_available == TRUE][["lspci_id"]] %>%
       unique()
   else
-    data_compounds[["lspci_id"]] %>%
+    value(f_data_compounds)[["lspci_id"]] %>%
       unique()
 }
 filter_commercial <- memoise(filter_commercial)

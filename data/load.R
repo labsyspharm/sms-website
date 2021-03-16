@@ -2,31 +2,32 @@ dir_data <- here("data")
 
 library(tictoc)
 
-data_files <- c(
-  "shiny_chemical_probes.fst",
-  "shiny_compound_names.fst",
-  "shiny_compounds.fst",
+data_files <- tribble(
+  ~file, ~load_type,
+  "shiny_chemical_probes.fst", "syn",
+  "shiny_compound_names.fst", "asyn",
+  "shiny_compounds.fst", "asyn",
   # "shiny_inchis.fst",
-  "shiny_library.fst",
-  "shiny_pfp.fst",
-  "shiny_selectivity.fst",
-  "shiny_targets.fst",
-  "shiny_target_map.fst",
-  "shiny_tas.fst"
+  "shiny_library.fst", "syn",
+  "shiny_pfp.fst", "syn",
+  "shiny_selectivity.fst", "asyn",
+  "shiny_targets.fst", "syn",
+  "shiny_target_map.fst", "syn",
+  "shiny_tas.fst", "asyn"
 ) %>%
-  set_names(
-    str_replace(., fixed("shiny"), "data") %>%
+  mutate(
+    name = str_replace(file, fixed("shiny"), "data") %>%
       str_replace(fixed(".fst"), "")
   )
 
 data_files %>%
-  extract(names(.) != "data_compound_names") %>%
-  imap(
-    ~{
-      message("Loading ", .y)
+  filter(load_type == "syn") %>%
+  pwalk(
+    function(name, file, ...) {
+      message("Loading ", name)
       tic()
       data <- read_fst(
-        file.path(dir_data, .x),
+        file.path(dir_data, file),
         as.data.table = TRUE
       )
       toc(quiet = FALSE)
@@ -38,27 +39,52 @@ data_files %>%
             levels = names(SELECTIVITY_ORDER), labels = SELECTIVITY_ORDER
           )
         ]
-      data
+      assign(name, data, envir = .GlobalEnv)
     }
-  ) %>%
-  iwalk(
-    ~assign(.y, .x, envir = .GlobalEnv)
   )
 
 # Handling compound names separately and asynchronously because it is so large
 # and only required in a single place
 library(future)
 plan(multicore)
-f_data_compound_names <- future({
-  message("Loading data_compound_names")
-  tic()
-  x <- read_fst(
-    file.path(dir_data, data_files[["data_compound_names"]]),
-    as.data.table = TRUE
+
+
+data_files %>%
+  filter(load_type == "asyn") %>%
+  pwalk(
+    function(name, file, ...) {
+      f <- future({
+        message("Asyn loading ", name)
+        tic()
+        data <- read_fst(
+          file.path(dir_data, file),
+          as.data.table = TRUE
+        )
+        toc(quiet = FALSE)
+        if ("selectivity_class" %in% colnames(data))
+          data[
+            ,
+            selectivity_class := factor(
+              selectivity_class,
+              levels = names(SELECTIVITY_ORDER), labels = SELECTIVITY_ORDER
+            )
+          ]
+        data
+      })
+      assign(paste0("f_", name), f, envir = .GlobalEnv)
+    }
   )
-  toc(quiet = FALSE)
-  x
-})
+
+# f_data_compound_names <- future({
+#   message("Loading data_compound_names")
+#   tic()
+#   x <- read_fst(
+#     file.path(dir_data, data_files[["data_compound_names"]]),
+#     as.data.table = TRUE
+#   )
+#   toc(quiet = FALSE)
+#   x
+# })
 
 data_fingerprints <- MorganFPS$new(
   file.path(dir_data, "shiny_fingerprints.bin"),

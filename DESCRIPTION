@@ -53,4 +53,5 @@ Imports:
   utils,
   R.utils,
   scales,
-  memoise
+  memoise,
+  future

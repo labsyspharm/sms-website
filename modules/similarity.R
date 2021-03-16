@@ -1,6 +1,6 @@
 tas_weighted_jaccard <- function(query_id, min_n = 6) {
-  query_tas <- data_tas[lspci_id == query_id, .(lspci_target_id, tas)]
-  data_tas[
+  query_tas <- value(f_data_tas)[lspci_id == query_id, .(lspci_target_id, tas)]
+  value(f_data_tas)[
     ,
     .(lspci_id, lspci_target_id, tas)
   ][
@@ -145,7 +145,7 @@ all_similarities_table <- function(
         ][,
           structural_similarity := round(structural_similarity, digits = 2)
         ][
-          data_compounds[, .(lspci_id, name = pref_name, chembl_id)],
+          value(f_data_compounds)[, .(lspci_id, name = pref_name, chembl_id)],
           on = "lspci_id", nomatch = NULL
         ]
       ), fill = TRUE)
@@ -367,7 +367,7 @@ similarityServer <- function(input, output, session) {
         .[
           lspci_id %in% r_eligible_lspci_ids()
         ][
-          data_compounds[
+          value(f_data_compounds)[
             ,
             .(lspci_id, name = pref_name, chembl_id)
           ],

@@ -38,7 +38,7 @@ mod_server_chembl_tabs <- function(input, output, session, r_selected_compound) 
     if (is.null(r_selected_compound()))
       NULL
     else
-      data_compounds[
+      value(f_data_compounds)[
         lspci_id == r_selected_compound(),
         .(chembl_id, emolecules_id, pref_name)
       ]

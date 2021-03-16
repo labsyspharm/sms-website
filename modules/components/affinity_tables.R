@@ -18,7 +18,7 @@ subset_dt <- function(dt, selectors) {
 mod_server_affinity_tables <- function(
   input, output, session,
   r_selection,
-  data_selectivity, data_tas, data_targets, data_compounds, selection = "none",
+  f_data_selectivity, f_data_tas, data_targets, f_data_compounds, selection = "none",
   r_eligible_lspci_ids
 ) {
   ns <- session$ns
@@ -37,10 +37,10 @@ mod_server_affinity_tables <- function(
       " Eligible lspci_ids: ", r_eligible_lspci_ids()
     )
 
-    subset_dt(data_selectivity, r_selection())[
+    subset_dt(value(f_data_selectivity), r_selection())[
       if (r_eligible_lspci_ids() == "all") TRUE else lspci_id %in% r_eligible_lspci_ids()
     ][
-      data_compounds[, .(lspci_id, chembl_id, name = pref_name)], on = "lspci_id", nomatch = NULL
+      value(f_data_compounds)[, .(lspci_id, chembl_id, name = pref_name)], on = "lspci_id", nomatch = NULL
     ][
       data_targets[, .(lspci_target_id, symbol, gene_id)], on = "lspci_target_id", nomatch = NULL
     ][
@@ -63,10 +63,10 @@ mod_server_affinity_tables <- function(
       r_eligible_lspci_ids(),
       !is.null(r_selection())
     )
-    subset_dt(data_tas, r_selection())[
+    subset_dt(value(f_data_tas), r_selection())[
       if (r_eligible_lspci_ids() == "all") TRUE else lspci_id %in% r_eligible_lspci_ids()
     ][
-      data_compounds[, .(lspci_id, chembl_id, name = pref_name)], on = "lspci_id", nomatch = NULL
+      value(f_data_compounds)[, .(lspci_id, chembl_id, name = pref_name)], on = "lspci_id", nomatch = NULL
     ][
       data_targets[, .(lspci_target_id, symbol, gene_id)], on = "lspci_target_id", nomatch = NULL
     ][

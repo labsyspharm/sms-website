@@ -79,7 +79,7 @@ target_id_to_name <- function(target) {
 }
 
 compound_id_to_name <- function(compound) {
-  data_compounds[
+  value(f_data_compounds)[
     lspci_id %in% compound
   ][["pref_name"]]
 }

@@ -115,7 +115,7 @@ bindingDataServer <- function(input, output, session) {
     mod_server_affinity_tables,
     "table",
     r_selection,
-    data_selectivity, data_tas, data_targets, data_compounds,
+    f_data_selectivity, f_data_tas, data_targets, f_data_compounds,
     r_eligible_lspci_ids = function() "all"
   )
 }

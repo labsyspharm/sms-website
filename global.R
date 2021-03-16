@@ -19,11 +19,10 @@ library(shinycssloaders)
 library(writexl)
 library(scales)
 library(memoise)
-# library(future)
+library(future)
 
-# plan(multicore)
-
-# source("awspass.config")
+plan(multicore)
+options(future.rng.onMisuse = "ignore")
 
 source("utils/utils.R", local = TRUE)
 source("utils/constants.R", local = TRUE)

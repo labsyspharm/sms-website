@@ -363,7 +363,7 @@ libraryServer <- function(input, output, session) {
   r_table_entry <- reactive({
     r_selection_table() %>%
       dplyr::inner_join(
-        data_compounds %>%
+        value(f_data_compounds) %>%
           dplyr::select(lspci_id, chembl_id, name = pref_name),
         by = "lspci_id"
       ) %>%
@@ -383,7 +383,7 @@ libraryServer <- function(input, output, session) {
   r_table_compound <- reactive({
     r_selection_table() %>%
       dplyr::inner_join(
-        data_compounds %>%
+        value(f_data_compounds) %>%
           dplyr::select(
             lspci_id, chembl_id, name = pref_name
           ),
