@@ -1,32 +1,36 @@
 source("global.R", local = TRUE)
 
+all_loaded <- FALSE
+data_loaded <- c()
+
 server <- function(input, output, session) {
 
   # Display message about data loading to user
-  pb <- Progress$new(min = 0, max = 1)
-  pb$set(message = "Loading data...")
-  loaded <- c()
-  observe({
-    all_done <- pmap_lgl(
-      data_futures,
-      function(name, ...) {
-        if (name %in% loaded) {
-          TRUE
-        } else if (resolved(get(paste0("f_", name)))) {
-          pb$inc(amount = 0.25, paste0("Loaded ", name))
-          loaded <<- c(loaded, name)
-          TRUE
+  if (!all_loaded) {
+    pb <- Progress$new(min = 0, max = 1)
+    pb$set(message = "Loading data...")
+    observe({
+      all_loaded <<- pmap_lgl(
+        data_futures,
+        function(name, ...) {
+          if (name %in% data_loaded) {
+            TRUE
+          } else if (resolved(get(paste0("f_", name)))) {
+            pb$inc(amount = 0.25, paste0("Loaded ", name))
+            data_loaded <<- c(data_loaded, name)
+            TRUE
+          }
+          else
+            FALSE
         }
-        else
-          FALSE
-      }
-    ) %>%
-      all()
-    if (all_done)
-      pb$close()
-    else
-      invalidateLater(500)
-  }, priority = 1)
+      ) %>%
+        all()
+      if (all_loaded)
+        pb$close()
+      else
+        invalidateLater(500)
+    }, priority = 1)
+  }
 
   observe({
     showNavPane(input$tab)
@@ -74,8 +78,11 @@ server <- function(input, output, session) {
   )
 }
 
+# library(waiter)
 ui <- function(req) {
   tagList(
+    # use_waiter(),
+    # waiter_show_on_load(html = spin_fading_circles()),
     page_headers(),
     webpage(
       nav = navbar_ui(),

@@ -48,6 +48,7 @@ data_futures %>%
   pwalk(
     function(name, file, ...) {
       f <- future({
+        message("Async loading ", name)
         data <- read_fst(
           file.path(dir_data, file),
           as.data.table = TRUE
@@ -61,7 +62,7 @@ data_futures %>%
             )
           ]
         data
-      }, lazy = FALSE)
+      }, lazy = FALSE, globals = c("SELECTIVITY_ORDER"), packages = c("data.table", "fst"))
       assign(paste0("f_", name), f, envir = .GlobalEnv)
     }
   )
