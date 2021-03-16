@@ -1,7 +1,5 @@
 dir_data <- here("data")
 
-library(tictoc)
-
 data_files <- tribble(
   ~file, ~load_type,
   "shiny_chemical_probes.fst", "syn",
@@ -25,12 +23,10 @@ data_files %>%
   pwalk(
     function(name, file, ...) {
       message("Loading ", name)
-      tic()
       data <- read_fst(
         file.path(dir_data, file),
         as.data.table = TRUE
       )
-      toc(quiet = FALSE)
       if ("selectivity_class" %in% colnames(data))
         data[
           ,
@@ -48,19 +44,16 @@ data_files %>%
 library(future)
 plan(multicore)
 
-
 data_files %>%
   filter(load_type == "asyn") %>%
   pwalk(
     function(name, file, ...) {
       f <- future({
         message("Asyn loading ", name)
-        tic()
         data <- read_fst(
           file.path(dir_data, file),
           as.data.table = TRUE
         )
-        toc(quiet = FALSE)
         if ("selectivity_class" %in% colnames(data))
           data[
             ,
@@ -74,17 +67,6 @@ data_files %>%
       assign(paste0("f_", name), f, envir = .GlobalEnv)
     }
   )
-
-# f_data_compound_names <- future({
-#   message("Loading data_compound_names")
-#   tic()
-#   x <- read_fst(
-#     file.path(dir_data, data_files[["data_compound_names"]]),
-#     as.data.table = TRUE
-#   )
-#   toc(quiet = FALSE)
-#   x
-# })
 
 data_fingerprints <- MorganFPS$new(
   file.path(dir_data, "shiny_fingerprints.bin"),

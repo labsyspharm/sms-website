@@ -54,29 +54,6 @@ eligible_compounds <- function(only_commercial) {
       , .(name, name_id, source)
     ]
 }
-# load_compound_names <- function() {
-#   tryCatch(
-#     get("data_compound_names"),
-#     error = function(e) {
-#       p_data_compound_names %...>% {
-#         assign("data_compound_names", ., envir = .GlobalEnv)
-#       }
-#     }
-#   )
-# }
-
-# eligible_compounds <- function(only_commercial) {
-#   if (only_commercial)
-#     data_compound_names[
-#       lspci_id %in% filter_commercial(TRUE)
-#     ][
-#       , .(name, name_id, source)
-#     ]
-#   else
-#     data_compound_names[
-#       , .(name, name_id, source)
-#     ]
-# }
 eligible_compounds <- memoise(eligible_compounds, omit_args = "data")
 
 #' Server module to select compounds
@@ -109,13 +86,6 @@ mod_server_select_compounds <- function(
   for (i in seq_along(selectize_options))
     selectize_options_[[names(selectize_options)[[i]]]] <- selectize_options[[i]]
 
-  # r_eligible_compounds <- reactiveVal()
-  #
-  # observeEvent(r_commercial_only(), {
-  #   req(!is.null(r_commercial_only()))
-  #   eligible_compounds(p_data_compound_names, r_commercial_only()) %...>%
-  #     r_eligible_compounds()
-  # })
   r_eligible_compounds <- reactive({
     req(!is.null(r_commercial_only()))
     eligible_compounds(r_commercial_only())
