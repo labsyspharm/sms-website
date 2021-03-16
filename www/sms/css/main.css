@@ -223,12 +223,13 @@ table.dataTable thead th {
 
 #shiny-notification-panel {
     position: fixed;
-    bottom: 0;
-    right: 0;
+    top: 50%;
+    left: 50%;
     background-color: rgba(0, 0, 0, 0);
     padding: 2px;
     width: 250px;
-    z-index: 99999
+    z-index: 99999;
+    transform: translate(-50%, -50%);
 }
 
 .shiny-notification {
