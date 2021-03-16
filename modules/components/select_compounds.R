@@ -42,7 +42,6 @@ strip_compound_suffix <- function(x) {
 
 eligible_compounds <- function(only_commercial) {
   data_compound_names <- value(f_data_compound_names)
-  str(data_compound_names)
   if (only_commercial)
     data_compound_names[
       lspci_id %in% filter_commercial(TRUE)

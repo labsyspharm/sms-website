@@ -162,3 +162,121 @@ table.dataTable thead th {
 .selectize-control .selectize-input {
   height: 100%;
 }
+
+
+/* Missing shiny notification css */
+
+.shiny-progress-container {
+    position: fixed;
+    top: 0px;
+    width: 100%;
+    z-index: 2000
+}
+
+.shiny-progress .progress {
+    position: absolute;
+    width: 100%;
+    top: 0px;
+    height: 3px;
+    margin: 0px
+}
+
+.shiny-progress .bar {
+    opacity: 0.6;
+    transition-duration: 250ms
+}
+
+.shiny-progress .progress-text {
+    position: absolute;
+    right: 10px;
+    width: 240px;
+    background-color: #eef8ff;
+    margin: 0px;
+    padding: 2px 3px;
+    opacity: 0.85
+}
+
+.shiny-progress .progress-text .progress-message {
+    padding: 0px 3px;
+    font-weight: bold;
+    font-size: 90%
+}
+
+.shiny-progress .progress-text .progress-detail {
+    padding: 0px 3px;
+    font-size: 80%
+}
+
+.shiny-progress-notification .progress {
+    margin-bottom: 5px;
+    height: 10px
+}
+
+.shiny-progress-notification .progress-text .progress-message {
+    font-weight: bold;
+    font-size: 90%
+}
+
+.shiny-progress-notification .progress-text .progress-detail {
+    font-size: 80%
+}
+
+#shiny-notification-panel {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0);
+    padding: 2px;
+    width: 250px;
+    z-index: 99999
+}
+
+.shiny-notification {
+    background-color: #e8e8e8;
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    opacity: 0.85;
+    padding: 10px 8px 10px 10px;
+    margin: 2px
+}
+
+.shiny-notification-message {
+    color: #31708f;
+    background-color: #d9edf7;
+    border: 1px solid #bce8f1
+}
+
+.shiny-notification-warning {
+    color: #8a6d3b;
+    background-color: #fcf8e3;
+    border: 1px solid #faebcc
+}
+
+.shiny-notification-error {
+    color: #a94442;
+    background-color: #f2dede;
+    border: 1px solid #ebccd1
+}
+
+.shiny-notification-close {
+    float: right;
+    font-weight: bold;
+    font-size: 18px;
+    bottom: 9px;
+    position: relative;
+    padding-left: 4px;
+    color: #444;
+    cursor: default
+}
+
+.shiny-notification-close:hover {
+    color: #000
+}
+
+.shiny-notification-content-action a {
+    color: #337ab7;
+    text-decoration: underline;
+    font-weight: bold
+}
+

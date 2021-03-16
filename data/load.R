@@ -41,15 +41,13 @@ data_files %>%
 
 # Handling compound names separately and asynchronously because it is so large
 # and only required in a single place
-library(future)
-plan(multicore)
+data_futures <- data_files %>%
+  filter(load_type == "asyn")
 
-data_files %>%
-  filter(load_type == "asyn") %>%
+data_futures %>%
   pwalk(
     function(name, file, ...) {
       f <- future({
-        message("Asyn loading ", name)
         data <- read_fst(
           file.path(dir_data, file),
           as.data.table = TRUE
@@ -63,7 +61,7 @@ data_files %>%
             )
           ]
         data
-      })
+      }, lazy = FALSE)
       assign(paste0("f_", name), f, envir = .GlobalEnv)
     }
   )

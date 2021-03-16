@@ -2,6 +2,32 @@ source("global.R", local = TRUE)
 
 server <- function(input, output, session) {
 
+  # Display message about data loading to user
+  pb <- Progress$new(min = 0, max = 1)
+  pb$set(message = "Loading data...")
+  loaded <- c()
+  observe({
+    all_done <- pmap_lgl(
+      data_futures,
+      function(name, ...) {
+        if (name %in% loaded) {
+          TRUE
+        } else if (resolved(get(paste0("f_", name)))) {
+          pb$inc(amount = 0.25, paste0("Loaded ", name))
+          loaded <<- c(loaded, name)
+          TRUE
+        }
+        else
+          FALSE
+      }
+    ) %>%
+      all()
+    if (all_done)
+      pb$close()
+    else
+      invalidateLater(500)
+  }, priority = 1)
+
   observe({
     showNavPane(input$tab)
   })
